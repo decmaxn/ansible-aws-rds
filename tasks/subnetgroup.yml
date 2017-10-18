@@ -1,0 +1,32 @@
+--- # Create Subnet Group for RDS
+- name: "Get Subnet ID for {{env}}_rds_private1"
+  ec2_vpc_subnet_facts:
+    region: "{{ item.region }}"
+    filters:
+      "tag:Name": "{{env}}_rds_private1"
+  register: subnet_private1
+  with_items: "{{ aws_rds }}"
+
+- name: "Get Subnet ID for {{env}}_rds_private2"
+  ec2_vpc_subnet_facts:
+    region: "{{ item.region }}"
+    filters:
+      "tag:Name": "{{env}}_rds_private2"
+  register: subnet_private2
+  with_items: "{{ aws_rds }}"
+
+- name: "Build RDS Subnet Group"
+  rds_subnet_group:
+    region: "{{ item.region }}"
+    state: present
+    name: "{{ item.vpc_subnet }}"
+    description: Subnet Group for {{ item.vpc_subnet }}
+    subnets:
+      - "{{ subnet_private1.results[0]['subnets'][0]['id'] }}"
+      - "{{ subnet_private2.results[0]['subnets'][0]['id'] }}"
+  register: subnet_group_results
+  with_items: "{{ aws_rds }}"
+
+- name: "Subnet group results"
+  debug:
+    var: subnet_group_results

@@ -2,6 +2,7 @@ ansible-aws-rds
 =========
 
 Creates RDS instances.
+ Also create RDS subnet group for that instance. This change is made after forked from AutomationWithAnsible
 
 Requirements
 ------------
@@ -41,3 +42,5 @@ Example Playbook
 
       roles:
          - { role: ansible-aws-rds }
+
+
