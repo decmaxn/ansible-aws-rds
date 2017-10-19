@@ -1,14 +1,15 @@
 ansible-aws-rds
 =========
 
-Creates RDS instances.
- Also create RDS subnet group for that instance. This change is made after forked from AutomationWithAnsible
+* Create RDS subnet group. 
+* Creates RDS instances.
+
 
 Requirements
 ------------
 
-boto
-
+* boto
+* Two private subnets for RDS have to be created in advance. 
 
 Role Variables
 --------------
