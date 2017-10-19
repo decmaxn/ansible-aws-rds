@@ -1,0 +1,19 @@
+--- # Create Parameter Group for RDS
+
+- name: Build MySQL Parameters
+  rds_param_group:
+    state: present
+    name: "{{ item.0.para_grp }}"
+    description: Parameters for "{{ item.0.para_grp }}"
+    engine: "{{ item.0.paragrp_engine | default(omit) }}"
+    immediate: no
+    region: "{{ item.0.region }}"
+    params: "{{ item.1.param }}={{ item.1.value }}"
+  with_subelements:
+    - "{{ aws_rds }}"
+    - rds_parameters
+  register: parameter_group_results
+
+- name: "Parameter group results"
+  debug:
+    var: parameter_group_results

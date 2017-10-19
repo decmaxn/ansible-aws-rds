@@ -1,3 +1,4 @@
 ---
 - include: subnetgroup.yml
+- include: parametergroup.yml
 - include: rds.yml
