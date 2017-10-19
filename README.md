@@ -2,6 +2,7 @@ ansible-aws-rds
 =========
 
 * Create RDS subnet group. 
+* Create RDS paramaters group. 
 * Creates RDS instances.
 
 

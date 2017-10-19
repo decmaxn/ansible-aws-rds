@@ -14,6 +14,7 @@
      publicly_accessible: "{{ item.publicly_accessible | default(omit) }}"
      db_name: "{{ item.db_name | default(omit) }}"
      subnet: "{{ item.vpc_subnet | default(omit) }}"
+     parameter_group: "{{ item.para_grp | default(omit) }}"
      zone: "{{ item.zone | default(omit) }}"
      command: "{{ item.command | default('create') }}"
      size: "{{ item.size | default(omit) }}"
