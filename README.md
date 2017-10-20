@@ -2,7 +2,9 @@ ansible-aws-rds
 =========
 
 * Create RDS subnet group. 
+  Two private subnets for RDS have to be created in advance, which have a tag named RDSName with value of {{env}}_rds_private1/2.
 * Create RDS paramaters group. 
+  Refer to the vars required in the Example section below.
 * Creates RDS instances.
 
 
@@ -10,7 +12,6 @@ Requirements
 ------------
 
 * boto
-* Two private subnets for RDS have to be created in advance. 
 
 Role Variables
 --------------
@@ -41,6 +42,14 @@ Example Playbook
           command             : "create"
           username            : "abcdefg"
           password            : "abcdefg123"
+        # vars required for subnetgroup and parameter group added: 
+          vpc_subnet              : "RDS-{{ env }}-subnetgroup"
+          para_grp                : "RDS-{{ env }}-parametergroup"
+          paragrp_engine          : "mysql5.6"
+          rds_parameters          :
+              - { param: 'max_heap_table_size', value: '33554432' }
+              - { param: 'sort_buffer_size', value: '16777216' }
+              - { param: 'tmp_table_size', value: '33554432' }
 
       roles:
          - { role: ansible-aws-rds }
