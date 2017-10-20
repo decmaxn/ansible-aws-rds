@@ -3,7 +3,7 @@
   ec2_vpc_subnet_facts:
     region: "{{ item.region }}"
     filters:
-      "tag:Name": "{{env}}_rds_private1"
+      "tag:RDSName": "{{env}}_rds_private1"
   register: subnet_private1
   with_items: "{{ aws_rds }}"
 
@@ -11,7 +11,7 @@
   ec2_vpc_subnet_facts:
     region: "{{ item.region }}"
     filters:
-      "tag:Name": "{{env}}_rds_private2"
+      "tag:RDSName": "{{env}}_rds_private2"
   register: subnet_private2
   with_items: "{{ aws_rds }}"
 
