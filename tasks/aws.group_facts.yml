@@ -1,0 +1,14 @@
+---
+- name: Get vpc security group facts based on group name variable.
+  ec2_group_facts:
+    aws_secret_key: "{{ aws_secret_key.stdout }}"
+    aws_access_key: "{{ aws_access_key.stdout }}"
+    region: "{{ vpc.region }}"
+    filters:
+      "tag:Name": "{{ item.vpc_security_groups }}"
+  with_items:
+    - "{{ aws_rds }}"
+  register: ec2_vpc_group_facts
+
+- name: debug group_facts
+  debug: var=ec2_vpc_group_facts.results.0.security_groups verbosity=1

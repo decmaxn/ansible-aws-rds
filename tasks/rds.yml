@@ -3,7 +3,7 @@
 ## For more info check http://docs.ansible.com/ansible/rds_module.html
 - name: rds | Provision a set of instances
   rds:
-     vpc_security_groups: "{{ item.security_group_id | default(omit) }}"
+     vpc_security_groups: "{{ ec2_vpc_group_facts.results.0.security_groups|map(attribute='group_id')|list | default(omit) }}"
      instance_type: "{{ item.instance_type }}"
      db_engine: "{{ item.db_engine | default(omit) }}"
      region: "{{ item.region | default(aws_rds_region) }}"

@@ -1,4 +1,6 @@
 ---
 - include: subnetgroup.yml
 - include: parametergroup.yml
+- include: aws.group_facts.yml
+
 - include: rds.yml
