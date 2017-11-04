@@ -2,5 +2,7 @@
 - include: subnetgroup.yml
 - include: parametergroup.yml
 - include: aws.group_facts.yml
-
+- include: restore.yml
+  when: command == "restore"
 - include: rds.yml
+  when: command == "create"

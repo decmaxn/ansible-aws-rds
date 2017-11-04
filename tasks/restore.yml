@@ -1,0 +1,50 @@
+---
+# tasks file for decmaxn.rds_facts
+- name: Restore RDS | Restore a set of snapshots
+  rds:
+     instance_type: "{{ item.instance_type }}"
+     snapshot: "{{ item.snapshot }}"
+     region: "{{ item.region | default(aws_rds_region) }}"
+     wait: "{{ item.wait | default(omit) }}"
+     wait_timeout: "{{ item.wait_timeout | default(aws_rds_wait) }}"
+     tags: "{{ item.instance_tags | default(omit) }}"
+     publicly_accessible: "{{ item.publicly_accessible | default(omit) }}"
+     subnet: "{{ item.vpc_subnet | default(omit) }}"
+     command: "{{ item.command | default('restore') }}"
+     instance_name: "{{ item.instance_name | default(omit) }}"
+     aws_secret_key: "{{ aws_secret_key.stdout }}"
+     aws_access_key: "{{ aws_access_key.stdout }}"
+     source_instance: "{{ item.source_instance | default(omit) }}"
+     port: "{{ item.port | default(omit) }}"
+  connection: local
+  delegate_to: localhost
+  register: rds_server
+  async: "{{ aws_rds_wait }}"
+  poll: 0
+  with_items: "{{ aws_rds }}"
+
+- name: Restore RDS | async array
+  async_status: jid={{ item.ansible_job_id }}
+  register: job_result
+  until: job_result.finished
+  with_items: "{{ rds_server.results }}"
+  retries: "{{ aws_rds_async_retries }}"
+
+- name: Restore RDS | Set result fact
+  set_fact:
+     #  Overwrite rds_server variable with actual run result for later usage by other roles (e.g. aws-route53).
+     rds_server={{ job_result.results[0].instance.endpoint }}
+
+- name: Restore RDS | Modify RDS to it's Security and Parameter groups
+  rds:
+    command: "{{ item.command | default('modify') }}"
+    region: "{{ item.region | default(aws_rds_region) }}"
+    parameter_group: "{{ item.para_grp | default(omit) }}"
+    vpc_security_groups: "{{ ec2_vpc_group_facts.results.0.security_groups|map(attribute='group_id')|list | default(omit) }}"
+    instance_name: "{{ item.instance_name | default(omit) }}"
+    backup_retention: "{{ item.backup_retention | default(omit) }}"
+    apply_immediately: "{{ item.apply_immediately }}"
+  with_items: "{{ aws_rds }}"
+
+- name: Restore RDS | Show RDS facts.
+  debug: var=rds_server verbosity=1

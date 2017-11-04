@@ -6,12 +6,15 @@ ansible-aws-rds
 * Create RDS paramaters group. 
   Refer to the vars required in the Example section below.
 * Creates RDS instances.
-
+  The aws.group_facts.yml will get vpc security group id, you just need to define the name. 
+* Restore database, by restore.yml. 
+** Added condition to main.yml to call different task file. Use command: restore or create as condition when calling this role
 
 Requirements
 ------------
 
 * boto
+* boto3 for aws.group_facts.yml 
 
 Role Variables
 --------------
