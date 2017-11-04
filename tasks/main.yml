@@ -6,3 +6,5 @@
   when: command == "restore"
 - include: rds.yml
   when: command == "create"
+- include: replicate.yml
+  when: command == "replicate"
