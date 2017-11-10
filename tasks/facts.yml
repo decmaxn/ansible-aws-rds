@@ -1,0 +1,16 @@
+---
+# tasks file for decmaxn.rds_facts
+- name: Get Facts of RDS | get facts of the RDS instance
+  rds:
+     region: "{{ item.region | default(aws_rds_region) }}"
+     command: "{{ item.command | default('facts') }}"
+     instance_name: "{{ item.instance_name | default(omit) }}"
+     aws_secret_key: "{{ aws_secret_key.stdout }}"
+     aws_access_key: "{{ aws_access_key.stdout }}"
+  connection: local
+  delegate_to: localhost
+  register: rds_server
+  with_items: "{{ aws_rds }}"
+
+- name: Get Facts of RDS | Show RDS facts.
+  debug: var=rds_server.results verbosity=1
