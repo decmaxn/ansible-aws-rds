@@ -3,8 +3,9 @@
 - include: parametergroup.yml
 - include: aws.group_facts.yml
 - include: restore.yml
-  when: command == "restore"
+  when: command is defined and command == "restore"
 - include: rds.yml
-  when: command == "create"
+  when: command is defined and command == "create"
 - include: replicate.yml
-  when: command == "replicate"
+  when: command is defined and command == "replicate"
+- include: facts.yml
