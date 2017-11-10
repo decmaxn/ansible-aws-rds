@@ -1,5 +1,5 @@
 --- # Create Subnet Group for RDS
-- name: "Get Subnet ID for {{env}}_rds_private1"
+- name: "Get Subnet ID for first subnet in this group"
   ec2_vpc_subnet_facts:
     region: "{{ item.region }}"
     filters:
@@ -7,7 +7,7 @@
   register: subnet_private1
   with_items: "{{ aws_rds }}"
 
-- name: "Get Subnet ID for {{env}}_rds_private2"
+- name: "Get Subnet ID for second subnet in this group"
   ec2_vpc_subnet_facts:
     region: "{{ item.region }}"
     filters:

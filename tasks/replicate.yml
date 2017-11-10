@@ -14,6 +14,7 @@
      aws_access_key: "{{ aws_access_key.stdout }}"
      source_instance: "{{ item.source_instance | default(omit) }}"
      port: "{{ item.port | default(omit) }}"
+     upgrade: "{{ item.upgrade | default(omit) }}"
   connection: local
   delegate_to: localhost
   register: rds_server
@@ -28,7 +29,7 @@
   with_items: "{{ rds_server.results }}"
   retries: "{{ aws_rds_async_retries }}"
 
-- name: rds | Set result fact
+- name: Replicate RDS | Set result fact
   set_fact:
      #  Overwrite rds_server variable with actual run result for later usage by other roles (e.g. aws-route53).
      rds_server={{ job_result.results[0].instance.endpoint }}
@@ -41,6 +42,8 @@
     vpc_security_groups: "{{ ec2_vpc_group_facts.results.0.security_groups|map(attribute='group_id')|list | default(omit) }}"
     instance_name: "{{ item.instance_name | default(omit) }}"
     multi_zone: "{{ item.multi_zone | default(omit) }}"
+    # Subnet option is not available for replicate, nor moidfy. It will only replicate to default subnet in default VPC.
+    #subnet: "{{ item.vpc_subnet | default(omit) }}"
     backup_retention: "{{ item.backup_retention | default(omit) }}"
     apply_immediately: "{{ item.apply_immediately }}"
   with_items: "{{ aws_rds }}"

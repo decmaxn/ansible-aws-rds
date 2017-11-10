@@ -1,7 +1,7 @@
 ---
 
 ## For more info check http://docs.ansible.com/ansible/rds_module.html
-- name: rds | Provision a set of instances
+- name: Create RDS | Provision a set of instances
   rds:
      vpc_security_groups: "{{ ec2_vpc_group_facts.results.0.security_groups|map(attribute='group_id')|list | default(omit) }}"
      instance_type: "{{ item.instance_type }}"
@@ -31,6 +31,7 @@
      port: "{{ item.port | default(omit) }}"
      iops: "{{ item.iops | default(omit) }}"
      character_set_name: "{{ item.character_set_name | default(omit) }}"
+     upgrade: "{{ item.upgrade | default(omit) }}"
   connection: local
   delegate_to: localhost
   register: rds_server
@@ -38,14 +39,14 @@
   poll: 0
   with_items: "{{ aws_rds }}"
 
-- name: rds | async array
+- name: Create RDS | async array
   async_status: jid={{ item.ansible_job_id }}
   register: job_result
   until: job_result.finished
   with_items: "{{ rds_server.results }}"
   retries: "{{ aws_rds_async_retries }}"
 
-- name: rds | Set result fact
+- name: Create RDS | Set result fact
   set_fact:
      #  Overwrite rds_server variable with actual run result for later usage by other roles (e.g. aws-route53).
      rds_server={{ job_result.results[0] }}
